@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "frontend-assessment-wg",
+  "name": "checkit-product-page",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-04-05",
   "compatibility_flags": [
@@ -14,7 +14,7 @@
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "frontend-assessment-wg"
+      "service": "checkit-product-page"
     }
   ],
   "images": {
