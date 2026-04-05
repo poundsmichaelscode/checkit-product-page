@@ -20,14 +20,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <section className="overflow-hidden rounded-[32px] border border-white/60 bg-hero px-6 py-8 shadow-soft sm:px-8 lg:px-10 lg:py-10">
         <div className="max-w-3xl">
           <span className="inline-flex rounded-full border border-blue-200 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-brand">
-            Frontend Assessment
+            Checit Product Page
           </span>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
             Checkit
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted sm:text-lg">
-            A production-ready content explorer built with Next.js App Router, TypeScript, and a performance-first UI.
-            Browse, search, and filter products with shareable URLs and rich product detail pages.
+           Discover everything you need in one place — from everyday household essentials to electronics and vehicles.
+          Browse, search, and filter products بسهولة with powerful tools, shareable links, and detailed product pages designed to help you make the right choice.
           </p>
         </div>
       </section>

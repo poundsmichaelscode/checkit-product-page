@@ -1,249 +1,418 @@
-# Checkit product page
 
-A production-quality **Content Explorer** built for a Frontend Engineer assessment using **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and **DummyJSON** as the public API source.
+# Checkit Product page 
 
-## Why this API
+A production-quality **Content Explorer** built for a Frontend Engineer assessment using **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and **Cloudflare Workers** deployment support.
 
-I chose **DummyJSON Products** because it is stable, free, image-rich, and supports the key assessment needs for a browsable product explorer: pagination, individual item detail, category filtering, and search.
+**Live concept:** a fast, responsive product discovery experience with server-rendered listings, shareable URL-based filtering, dynamic product detail pages, and strong performance-focused engineering decisions.
 
-## Live scope covered
+## Repository
 
-- Server-rendered listing page with **20 items per page**
-- Dynamic detail page with server-side data fetching
-- URL-driven **search**, **category filter**, and **sorting**
-- Debounced search input (**400ms**)
-- Shareable filtered URLs
-- Skeleton loading states
-- Friendly route-level error boundary
-- Dedicated empty-state UI
-- Responsive layout for mobile, tablet, and desktop
-- Metadata support for detail pages
-- Two meaningful Vitest + Testing Library tests
-- Cloudflare Workers deployment configuration via **OpenNext**
+GitHub: [poundsmichaelscode/checkit-product-page](https://github.com/poundsmichaelscode/checkit-product-page)
 
-## Quick start
+---
 
-```bash
-git clone <your-repo-url>
-cd frontend-assessment-wg
-npm install
-npm run dev
-```
+## Overview
 
-Open `http://localhost:3000`
+Checkit is a modern content explorer application built around the **DummyJSON Products API**. It allows users to:
 
-## Scripts
+- browse products in a responsive grid
+- search products with debounced input
+- filter by category
+- paginate through results
+- open dynamic product detail pages
+- share the current filtered state through the URL
 
-```bash
-npm run dev
-npm run build
-npm run start
-npm run test
-npm run preview
-npm run deploy
-```
+The goal of this project was not to build a massive product, but to demonstrate **frontend engineering judgment**, including:
 
-## Stack
+- clean architecture
+- scalable component composition
+- server-side data fetching
+- strong UX states
+- performance optimization
+- deployment awareness for Cloudflare Workers
 
-- Next.js 16 App Router
-- React 19
-- TypeScript (strict mode)
-- Tailwind CSS
-- Vitest + React Testing Library
-- OpenNext Cloudflare adapter
+---
 
-## Architecture decisions
+## Tech Stack
 
-### 1. Feature-driven App Router structure
-The project is organized around route segments and reusable UI layers:
+- **Next.js 16** (App Router)
+- **TypeScript**
+- **React 19**
+- **Tailwind CSS**
+- **Vitest + React Testing Library**
+- **OpenNext Cloudflare**
+- **Wrangler**
 
-- `app/` for route entry points, metadata, loading, and error boundaries
-- `components/` for composable UI blocks
-- `lib/` for API access, formatting helpers, and query normalization
-- `hooks/` for debounced URL updates
-- `types/` for all shared domain types
-- `tests/` for focused component and utility coverage
+---
 
-This keeps data logic out of JSX and prevents route files from becoming monoliths.
+## API Choice
 
-### 2. API abstraction in `lib/api.ts`
-No component calls `fetch()` directly. All remote requests are abstracted behind a small API layer so caching strategy, query composition, and error behavior are centralized.
+This project uses the **DummyJSON Products API**.
 
-### 3. URL-driven state
-Search, category, and sort are all reflected in the URL to make the UI shareable and restoreable. The search box uses a debounced client hook to avoid a navigation per keystroke.
+### Why DummyJSON?
+It was chosen because it provides:
 
-### 4. Pagination over infinite scroll
-I intentionally chose **pagination** instead of infinite scroll because it provides:
+- stable public endpoints
+- product images
+- categories
+- search support
+- item detail endpoints
+- pagination-friendly data
+- no API key requirement
 
-- predictable performance
-- clearer state restoration
-- easier sharable URLs
-- better accessibility and keyboard navigation
-- simpler review for recruiters and QA
+This made it a practical choice for building a polished content explorer within the assessment timeframe.
 
-For an assessment where engineering judgment matters, pagination is the more maintainable default.
+---
 
-## Performance optimizations applied
+## Features
 
-### 1. `next/image`
-All product imagery uses `next/image` with explicit sizing behavior and priority loading for the first visible row on page one. This helps reduce layout shift and improves LCP.
+### 1. Listing Page
+- server-rendered product listing
+- displays at least 20 items
+- responsive card grid
+- each card includes:
+  - product title
+  - product image with graceful fallback
+  - category
+  - rating
+  - price
+- pagination support
+- responsive layout:
+  - mobile: 1 column
+  - tablet: 2 columns
+  - desktop: 3–4 columns
 
-### 2. `next/font`
-The app uses `next/font/google` for Inter to avoid render-blocking font loading patterns and improve CLS.
+### 2. Detail Page
+- dynamic route: `/products/[id]`
+- server-fetched product detail page
+- SEO metadata generated per product
+- Open Graph image metadata
+- breadcrumb navigation back to listing
 
-### 3. Cache-aware data fetching
-The API layer uses route-appropriate caching:
+### 3. Search and Filtering
+- debounced search input
+- category filter
+- sort support
+- URL-driven state using search params
+- filters are shareable through the URL
 
-- categories: `revalidate: 3600`
-- listing/search/category results: `revalidate: 300`
-- product detail: `revalidate: 900`
+### 4. UX States
+- skeleton loading states
+- dedicated empty state UI
+- friendly error boundary
+- image fallbacks
+- clean no-results experience
 
-This balances freshness with repeated-request performance.
+### 5. Testing
+- meaningful component-level tests using:
+  - Vitest
+  - React Testing Library
 
-### 4. Static asset caching for Cloudflare
-The app includes a `public/_headers` rule for immutable Next static assets:
+### 6. Deployment Support
+- Cloudflare Workers compatible setup using OpenNext
+- configured for modern SSR deployment flow
+
+---
+
+## Project Structure
 
 ```txt
-/_next/static/*
-  Cache-Control: public,max-age=31536000,immutable
-```
+app/
+  error.tsx
+  globals.css
+  layout.tsx
+  loading.tsx
+  page.tsx
+  products/
+    [id]/
+      page.tsx
 
-### 5. Small client surface area
-The listing itself stays server-rendered. Only the filter controls use client-side interactivity.
+components/
+  filters/
+  layout/
+  products/
+  ui/
 
-## Assessment feature mapping
+lib/
+  api.ts
+  constants.ts
+  utils.ts
 
-### F-1 Listing page
-- Server-rendered listing route
-- 20 items per page
-- Product cards include title, image, price, discount, rating, and brand
-- Responsive grid: 1 / 2 / 4 columns depending on viewport
-- Pagination implemented with preserved query state
+types/
+  product.ts
 
-### F-2 Detail page
-- Dynamic route: `app/items/[id]/page.tsx`
-- Server-side data fetching
-- Metadata generated per item
-- Breadcrumb back to filtered listing/category entry point
+public/
+tests/
+wrangler.jsonc
+next.config.ts
+````
 
-### F-3 Search & filtering
-- Debounced search input (400ms)
-- Category filter
-- Sort filter
-- URL reflects active state
+### Architecture Notes
 
-### F-4 Loading, error, and empty states
-- `app/loading.tsx`
-- `app/items/[id]/loading.tsx`
-- `app/error.tsx`
-- dedicated empty-state component
+This project follows a structure designed for clarity and scalability:
 
-### F-5 Deployment
-- Cloudflare Workers configuration included with OpenNext
-- Vercel remains a fallback option if Cloudflare account setup is unavailable during review
+* **app/** contains route-level UI and route composition
+* **components/** contains reusable presentational and interactive UI pieces
+* **lib/** contains API access, constants, and utilities
+* **types/** centralizes shared TypeScript contracts
+* route components do **not** call `fetch()` directly
+* shared logic is extracted out of JSX where possible
 
-## Cloudflare deployment notes
+---
 
-### Cloudflare Workers Builds setup
+## Engineering Decisions
 
-If you connect this repo to **Cloudflare Workers Builds**, set the **Deploy command** to:
+### Why App Router?
+
+The App Router provides a strong fit for this assessment because it supports:
+
+* server components
+* route-level loading and error states
+* metadata generation
+* improved data-fetching organization
+
+### Why pagination instead of infinite scroll?
+
+Pagination was chosen because it is:
+
+* simpler to reason about
+* easier to test
+* more accessible
+* better for shareable state and deterministic navigation
+* easier to evaluate during code review
+
+It also maps cleanly to URL-driven search params, which is valuable for this assessment.
+
+### Why URL-driven filters?
+
+Search and filters are stored in the URL so that:
+
+* views are shareable
+* browser navigation works naturally
+* state survives refreshes
+* the app behaves like a real production search experience
+
+---
+
+## Performance Optimizations
+
+This project includes multiple performance-focused decisions:
+
+### 1. Optimized Images
+
+* uses `next/image`
+* remote image sources are explicitly configured
+* prevents layout shift with defined sizing behavior
+* improves loading efficiency for media-heavy cards
+
+### 2. Server-side Data Fetching + Cache Control
+
+Fetch requests use explicit Next.js caching strategies where appropriate:
+
+* category lists use longer revalidation
+* listing data uses shorter revalidation
+* detail pages use controlled revalidation windows
+
+This balances freshness and performance.
+
+### 3. Font Optimization
+
+* uses `next/font`
+* avoids layout instability from late-loading web fonts
+* improves rendering performance
+
+### 4. Lean Component Design
+
+* avoids unnecessary heavy client-side state
+* keeps data logic mostly server-side
+* reduces hydration cost where possible
+
+### 5. Static Asset Caching
+
+* Cloudflare-friendly static headers included for immutable Next assets
+
+---
+
+## Accessibility Notes
+
+The UI was built with accessibility in mind:
+
+* semantic HTML structure
+* accessible buttons and links
+* readable color contrast
+* responsive spacing and layout
+* keyboard-friendly interactive controls
+* clear visual hierarchy
+
+---
+
+## Setup Instructions
+
+### Requirements
+
+* Node.js 20+
+* npm
+
+### Run locally
 
 ```bash
-npm run deploy
-```
-
-Do **not** use `npx wrangler deploy` as the dashboard deploy command for this repo. The OpenNext docs recommend using the `opennextjs-cloudflare` CLI for Next.js apps on Workers, and Workers Builds does not honor custom build steps inside `wrangler.jsonc`. That means `wrangler deploy` can run before `.open-next/assets` exists, which causes the static assets detection error.
-
-Recommended Workers Builds settings:
-
-```text
-Build command: npm install
-Deploy command: npm run deploy
-```
-
-For local manual deployment, you can also run:
-
-```bash
-npm run deploy:wrangler
-```
-
-This explicitly builds the OpenNext output first and then runs Wrangler.
-
-
-This repo is pre-configured for **Cloudflare Workers** with:
-
-- `@opennextjs/cloudflare`
-- `wrangler.jsonc`
-- `open-next.config.ts`
-- `public/_headers`
-- `npm run preview`
-- `npm run deploy`
-
-### Deploy steps
-
-```bash
+git clone https://github.com/poundsmichaelscode/checkit-product-page.git
+cd checkit-product-page
 npm install
-npm run build
-npm run preview
-npm run deploy
+npm run dev
 ```
 
-If needed, update the Worker name inside `wrangler.jsonc` before deployment.
+Then open:
+
+```txt
+http://localhost:3000
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+DUMMYJSON_BASE_URL=https://dummyjson.com
+```
+
+You can also use `.env.local` during development.
+
+### Example
+
+A `.env.example` file should contain:
+
+```env
+DUMMYJSON_BASE_URL=
+```
+
+---
 
 ## Testing
 
-Included tests:
+Run tests with:
 
-- `tests/utils.test.ts`
-  - validates search param normalization
-  - validates URL construction
-  - validates sort behavior
-- `tests/product-card.test.tsx`
-  - validates key UI content for a product card
+```bash
+npm run test
+```
 
-## Trade-offs and known limitations
+Watch mode:
 
-- DummyJSON search is not fully combined server-side with category pagination, so category + search uses a fetch-then-filter strategy for the result set.
-- I prioritized strong core assessment coverage over adding animations or dashboard-level interactions.
-- I did not implement advanced analytics, persistent favorites, or edge cache inspection headers because those are beyond the core rubric and I chose depth over bonus sprawl.
+```bash
+npm run test:watch
+```
 
-## What I would do with 2 more hours
+---
 
-1. Add an accessibility audit report with axe and tighten any remaining contrast or landmark improvements.
-2. Add edge cache verification headers for the listing route on Cloudflare.
-3. Expand test coverage to pagination and search-controls behavior.
+## Cloudflare Deployment
 
-## Bonus task status
+This project is configured for **Cloudflare Workers** using **OpenNext**.
 
-### Attempted
-- Cloudflare Workers deployment setup via OpenNext
+### Recommended deployment approach
 
-### Not fully implemented
-- visible `x-cache-status` header
-- dedicated Suspense streaming bonus section
-- formal accessibility audit report artifact
+For Windows development, local OpenNext preview/deploy may be unstable because the Cloudflare local runtime is not fully reliable on native Windows. The recommended production path is:
+
+* develop locally with `npm run dev`
+* deploy through **Cloudflare Workers Builds** or from **WSL/Linux**
+
+### Cloudflare build settings
+
+* **Install command**
+
+  ```bash
+  npm install
+  ```
+
+* **Build command**
+
+  ```bash
+  npx @opennextjs/cloudflare build
+  ```
+
+* **Deploy command**
+
+  ```bash
+  npx @opennextjs/cloudflare deploy
+  ```
+
+### Recommended environment variables in Cloudflare
+
+```env
+NODE_VERSION=20
+DUMMYJSON_BASE_URL=https://dummyjson.com
+```
+
+---
+
+## Scripts
+
+```json
+{
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "test": "vitest run",
+  "test:watch": "vitest",
+  "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+  "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+  "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+  "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+}
+```
+
+---
+
+## Known Trade-offs and Limitations
+
+Given more time, I would improve the following areas:
+
+* add more robust test coverage across filtering and pagination flows
+* enhance empty/error state illustrations and animation polish
+* add more advanced accessibility auditing and documented results
+* introduce analytics for search/filter interaction
+* improve detail page richness with related items or comparison tools
+* validate final production deployment on Linux-only CI for a stricter Cloudflare verification path
+
+---
+
+## What I Would Tackle Next With Another 2 Hours
+
+If given two more hours, I would:
+
+1. add a richer accessibility audit and document the fixes clearly
+2. improve perceived performance with more granular Suspense boundaries
+3. refine UI polish further on pagination, transitions, and card interactions
+
+---
+
+## Assessment Alignment
+
+This submission is designed to demonstrate my strength in:
+
+* UI implementation
+* responsive design
+* URL-driven state management
+* server-side rendering patterns
+* clean TypeScript architecture
+* production-aware deployment setup
+* performance-conscious frontend engineering
+
+---
+
+## Author
+
+**Olayanikan Michael**
+GitHub: [@poundsmichaelscode](https://github.com/poundsmichaelscode)
+
+---
+
+## License
+
+This project was created for assessment purposes.
 
 
-
-## Submission note suggestion
-
-> I focused on building a polished, production-minded implementation of the required scope with strong URL-driven state, maintainable server/client boundaries, and practical performance decisions. With another 2 hours, I would add Cloudflare cache inspection headers, a documented accessibility audit, and broader interaction tests.
-
-
-## Final deployment checklist
-
-Use these exact Cloudflare settings:
-
-- Install command: `npm install`
-- Deploy command: `npm run deploy`
-- Environment variable: `NODE_VERSION=20`
-
-Root version files included in this repo:
-
-- `.nvmrc` → `20`
-- `.node-version` → `20`
-
-If you are testing locally on Windows, use `npm run dev` for development. For Cloudflare preview and deploy, WSL is more reliable than native Windows because OpenNext warns about partial Windows compatibility.
 
 
 

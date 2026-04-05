@@ -16,7 +16,7 @@ export function Pagination({ currentPage, totalPages, params }: PaginationProps)
   return (
     <nav aria-label="Pagination" className="flex flex-col gap-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-card sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-muted">
-        Use pagination to keep the browsing experience fast and predictable across slower connections.
+       Explore multiple products and choose the right one for you. by OLAYENIKAN MICHAEL
       </p>
       <div className="flex items-center gap-3">
         <Link
